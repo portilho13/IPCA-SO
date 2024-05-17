@@ -32,6 +32,11 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    if (close(fd) < 0) {
+        perror("c1");
+        return -1;
+    }
+
     int fc = creat("ficheiro.copia", O_RDWR);
     if (fc == -1) {
         perror("Erro ao criar ficheiro");
@@ -43,6 +48,10 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    if (close(fd) < 0) {
+        perror("c1");
+        return -1;
+    }
 
     return 0;
 }
