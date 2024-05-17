@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
@@ -7,25 +6,22 @@
 
 #define MAX_SIZE 1000
 
-
 int main(int argc, char* argv[]) {
+
+    char buffer[MAX_SIZE]; // Buffer para ler o ficheiro
+
     if (argc < 2) {
-        printf("Uso correto: %s <arquivo>\n", argv[0]);
+        perror("Uso correto: copia <origem> <destino>");
         return -1;
     }
 
     char* ficheiro = argv[1];
 
-    // Abre o ficheiro
-
-    int fd = open(ficheiro, O_RDONLY);
-
+    size_t fd = open(ficheiro, O_RDONLY);
     if (fd == -1) {
-        perror("open");
+        perror("Ficheiro nao existe");
         return -1;
     }
-
-    char buffer[MAX_SIZE]; // Buffer para ler o ficheiro
 
     // Lê o ficheiro
     size_t sz = read(fd, buffer, MAX_SIZE);
@@ -36,17 +32,17 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    if (close(fd) < 0) {
-        perror("c1");
+    int fc = creat("ficheiro.copia", O_RDWR);
+    if (fc == -1) {
+        perror("Erro ao criar ficheiro");
         return -1;
     }
 
-    // Escreve o conteúdo do ficheiro no stdout e verifica se houve erro
-    if (write(STDOUT_FILENO, buffer, sz) == -1) {
-        perror("write");
+    if (write(fc, buffer, sz) == -1) {
+        perror("Erro ao escrever no ficheiro");
         return -1;
     }
+
 
     return 0;
-
 }
