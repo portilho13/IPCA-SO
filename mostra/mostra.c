@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
@@ -6,7 +5,6 @@
 #include <stdio.h>
 
 #define MAX_SIZE 1000
-
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
