@@ -3,13 +3,15 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_SIZE 1000
 
 int main(int argc, char* argv[]) {
-
+    char* err;
     if (argc < 3) {
-        printf("Uso correto: %s <arquivo1> <arquivo2>\n", argv[0]);
+        err = "Uso correto: acrescenta <origem> <destino>\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
     char buffer[MAX_SIZE]; // Buffer para ler o ficheiro
@@ -18,31 +20,36 @@ int main(int argc, char* argv[]) {
     char* ficheiro2 = argv[2];
 
     // Abre o ficheiro
-    size_t t1 = open(ficheiro1, O_RDONLY);
+    int t1 = open(ficheiro1, O_RDONLY);
     if (t1 == -1) {
-        perror("open");
+        err = "Ficheiro nao existe\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
-    size_t r1 = read(t1, buffer, MAX_SIZE);
+    int r1 = read(t1, buffer, MAX_SIZE);
     if (r1 == -1) {
-        perror("read");
+        err = "Erro ao ler ficheiro\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
     
-    size_t t2 = open(ficheiro2, O_WRONLY | O_APPEND);
+    int t2 = open(ficheiro2, O_WRONLY | O_APPEND);
     if (t2 == -1) {
-        perror("open");
+        err = "Erro ao abrir arquivo\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
     if (write(t2, buffer, r1) == -1) {
-        perror("write");
+        err = "Erro ao escrever no ficheiro\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
     if (close(t2) < 0) {
-        perror("Erro ao fechar arquivo");
+        err =  "Erro ao fechar arquivo\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 

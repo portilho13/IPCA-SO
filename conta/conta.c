@@ -4,12 +4,15 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_SIZE 1000
 
 int main(int argc, char* argv[]) {
+    char* err;
     if (argc < 2) {
-        printf("Uso correto: %s <arquivo>\n", argv[0]);
+        err = "Uso correto: conta <ficheiro>\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 

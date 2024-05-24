@@ -3,12 +3,15 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_SIZE 1000
 
 int main(int argc, char* argv[]) {
+    char* err;
     if (argc < 2) {
-        printf("Uso correto: %s <arquivo>\n", argv[0]);
+        err = "Uso correto: mostra <ficheiro>\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
@@ -19,7 +22,8 @@ int main(int argc, char* argv[]) {
     int fd = open(ficheiro, O_RDONLY);
 
     if (fd == -1) {
-        perror("open");
+        err = "Ficheiro nao existe\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
@@ -30,18 +34,21 @@ int main(int argc, char* argv[]) {
     
     // Verifica se houve erro
     if (sz == -1) {
-        perror("read");
+        err = "Erro ao ler ficheiro\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
     if (close(fd) < 0) {
-        perror("c1");
+        err = "Erro ao fechar arquivo\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
     // Escreve o conteúdo do ficheiro no stdout e verifica se houve erro
     if (write(STDOUT_FILENO, buffer, sz) == -1) {
-        perror("write");
+        err = "Erro ao escrever no stdout\n";
+        write(STDERR_FILENO, err, strlen(err));
         return -1;
     }
 
