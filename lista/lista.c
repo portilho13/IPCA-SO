@@ -10,15 +10,17 @@
 void listar_diretorio(const char* path) {
     struct dirent* entry;
     struct stat statbuf;
+    char* err;
     char mensagem[MSG];
     DIR* dp;
 
     dp = opendir(path);
     if (dp == NULL) {
-        perror("opendir");
+        err = "Erro ao abrir diretorio\n";
+        write(STDERR_FILENO, err, strlen(err));
         return;
     }
-    snprintf(mensagem, sizeof(mensagem), "Listagem do diretÃ³rio: %s>\n", path);
+    snprintf(mensagem, sizeof(mensagem), "Listagem do diretorio: %s >\n", path);
 
     write(STDOUT_FILENO, mensagem, strlen(mensagem));
 
@@ -29,17 +31,18 @@ void listar_diretorio(const char* path) {
         snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
 
         if (stat(fullpath, &statbuf) == -1) {
-            perror("stat");
+            err = "Erro ao obter informacoes do arquivo\n";
+            write(STDERR_FILENO, err, strlen(err));
             continue;
         }
-
+        printf("|\n");
         if (S_ISDIR(statbuf.st_mode)) {
-            snprintf(mensagem, sizeof(mensagem), "[DIR]  %s\n", entry->d_name);
+            snprintf(mensagem, sizeof(mensagem), " -> [DIR]  %s\n", entry->d_name);
             write(STDOUT_FILENO, mensagem, strlen(mensagem));
 
         }
         else {
-            snprintf(mensagem, sizeof(mensagem), "[FILE] %s\n", entry->d_name);
+            snprintf(mensagem, sizeof(mensagem), " -> [FILE] %s\n", entry->d_name);
             write(STDOUT_FILENO, mensagem, strlen(mensagem));
 
         }

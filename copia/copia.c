@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    int fc = creat("ficheiro.copia", O_RDWR);
+    int fc = open("ficheiro.copia", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (fc == -1) {
         err = "Erro ao criar ficheiro\n";
         write(STDERR_FILENO, err, strlen(err));

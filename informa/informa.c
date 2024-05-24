@@ -33,6 +33,7 @@ void print_file_info(const char *path) {
     struct passwd *pwd;
     struct group *grp;
     char timebuf[80];
+    char buffer[256];
 
     if (stat(path, &statbuf) == -1) {
         perror("stat");
@@ -70,22 +71,31 @@ void print_file_info(const char *path) {
     write(STDOUT_FILENO, tipo, strlen(tipo));
 
     // i-node
-    printf("i-node: %ld\n", (long) statbuf.st_ino);
+    snprintf(buffer, sizeof(buffer), "i-node: %ld\n", (long) statbuf.st_ino);
+    write(STDOUT_FILENO, buffer, strlen(buffer));
 
     // Utilizador dono
     pwd = getpwuid(statbuf.st_uid);
     grp = getgrgid(statbuf.st_gid);
-    printf("Dono: %s (UID: %d, GID: %d, Grupo: %s)\n", pwd ? pwd->pw_name : "Desconhecido", statbuf.st_uid, statbuf.st_gid, grp ? grp->gr_name : "Desconhecido");
+    snprintf(buffer, sizeof(buffer), "Dono: %s (UID: %d, GID: %d, Grupo: %s)\n", 
+             pwd ? pwd->pw_name : "Desconhecido", 
+             statbuf.st_uid, 
+             statbuf.st_gid, 
+             grp ? grp->gr_name : "Desconhecido");
+    write(STDOUT_FILENO, buffer, strlen(buffer));
 
     // Datas
     strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&statbuf.st_ctime));
-    printf("Data de criação: %s\n", timebuf);
+    snprintf(buffer, sizeof(buffer), "Data de criação: %s\n", timebuf);
+    write(STDOUT_FILENO, buffer, strlen(buffer));
 
     strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&statbuf.st_atime));
-    printf("Data de último acesso: %s\n", timebuf);
+    snprintf(buffer, sizeof(buffer), "Data de último acesso: %s\n", timebuf);
+    write(STDOUT_FILENO, buffer, strlen(buffer));
 
     strftime(timebuf, sizeof(timebuf), "%Y-%m-%d %H:%M:%S", localtime(&statbuf.st_mtime));
-    printf("Data de última modificação: %s\n", timebuf);
+    snprintf(buffer, sizeof(buffer), "Data de última modificação: %s\n", timebuf);
+    write(STDOUT_FILENO, buffer, strlen(buffer));
 }
 
 int main(int argc, char *argv[]) {
